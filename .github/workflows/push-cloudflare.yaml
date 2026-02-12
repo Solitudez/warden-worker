@@ -3,6 +3,8 @@ name: Build
 on:
   push:
     branches: [main, uat, release*]
+    paths-ignore:
+      - ".github/keepalive.txt"
   workflow_dispatch:
 
 jobs:
