@@ -18,7 +18,7 @@ jobs:
             const { owner, repo } = context.repo;
             const path = ".github/keepalive.txt";
             const message = "chore: keep alive";
-            const content = `Last keep alive: ${new Date().toISOString()}\n`;
+            const fileContent = `Last keep alive: ${new Date().toISOString()}\n`;
             let sha;
             try {
               const response = await github.rest.repos.getContent({ owner, repo, path });
@@ -33,6 +33,6 @@ jobs:
               repo,
               path,
               message,
-              content: Buffer.from(content).toString("base64"),
+              content: Buffer.from(fileContent).toString("base64"),
               sha,
             });
