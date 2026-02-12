@@ -1,0 +1,35 @@
+name: Keep Alive
+
+# 每 50 天运行一次（在 60 天限制内），也可手动触发
+on:
+  schedule:
+    - cron: "0 0 1,21 * *"  # 每月 1 号和 21 号 UTC 00:00 运行（约每 20 天）
+  workflow_dispatch:
+
+jobs:
+  keep-alive:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write   # 需要写权限来推送 commit
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Keep alive
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # 更新时间戳文件
+          echo "Last keep-alive: $(date -u '+%Y-%m-%d %H:%M:%S UTC')" > .keep-alive
+          
+          git add .keep-alive
+          
+          # 只在有变化时才 commit（避免空 commit 报错）
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "chore: keep alive [skip ci]"
+            git push
+          fi
